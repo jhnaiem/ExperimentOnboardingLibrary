@@ -1,5 +1,6 @@
 package com.example.onboardingnavdrawer.NetworkRelatedClass;
 
+import com.example.onboardingnavdrawer.model.LoginResponseBody;
 import com.example.onboardingnavdrawer.model.ServerResponse;
 import com.example.onboardingnavdrawer.model.User;
 
@@ -15,10 +16,9 @@ public interface ApiInterface {
 
     @POST("/api/login/")
     @Headers({
-
             "content-type:application/json",
     })
-    Observable<ServerResponse> getUserValidity(@Body RequestBody user);
+    Observable<LoginResponseBody> getUserValidity(@Body RequestBody user);
 
 
 }

@@ -29,7 +29,7 @@ public class MainViewModel extends ViewModel {
             @Override
             public void onSuccess(String data) {
 
-                loginRequestStatus.setValue(true);
+                loginRequestStatus.setValue(Boolean.valueOf(data));
 
             }
 

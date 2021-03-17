@@ -13,9 +13,14 @@ import android.widget.EditText;
 import com.example.onboardingnavdrawer.model.User;
 import com.example.onboardingnavdrawer.viewmodel.MainViewModel;
 
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
+
 public class LoginActivity extends AppCompatActivity {
-    EditText mUsername, mPassword;
-    Button mlogin;
+
+    private Realm mRealm = null;
+    private EditText mUsername, mPassword;
+    private Button mlogin;
 
     MainViewModel viewModel;
 
@@ -30,6 +35,18 @@ public class LoginActivity extends AppCompatActivity {
         mUsername = findViewById(R.id.et_username);
         mPassword = findViewById(R.id.et_password);
         mlogin = findViewById(R.id.btn_login);
+
+
+
+        //Config Realm
+        Realm.init(this);
+        RealmConfiguration realmConfiguration = new RealmConfiguration
+                .Builder()
+                .name("userInfo.realm")
+                .deleteRealmIfMigrationNeeded()
+                .build();
+        Realm.setDefaultConfiguration(realmConfiguration);
+
 
         mlogin.setOnClickListener(new View.OnClickListener() {
             @Override

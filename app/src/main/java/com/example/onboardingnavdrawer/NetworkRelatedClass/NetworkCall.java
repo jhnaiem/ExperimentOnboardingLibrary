@@ -44,6 +44,7 @@ public class NetworkCall implements MyApiService {
                     @Override
                     public void onNext(ServerResponse value) {
 
+                        callback.onSuccess(value.toString());
                         Log.d("Response",value.toString());
                     }
 
