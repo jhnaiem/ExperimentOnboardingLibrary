@@ -66,6 +66,7 @@ public class AppModuleAssignment extends RealmObject {
     @SerializedName(COLUMN_SAAS_MODULE_ACCESS_KEY)
     @Expose
     private String saas_module_key;
+
     private Long user_id;
 
     public Long getId() {
