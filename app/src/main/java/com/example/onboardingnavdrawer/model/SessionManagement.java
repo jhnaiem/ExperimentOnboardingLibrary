@@ -18,18 +18,31 @@ public class SessionManagement {
         //save session of user whenever user is logged in
         long id = sessionData.getUserId();
         String orgName = sessionData.getOrganization_name();
+        sessionData.getUserName();
 
         editor.putLong(SESSION_KEY, id).commit();
         editor.putString("OrgName", orgName).commit();
+        editor.putString("Username",sessionData.getUserName()).commit();
+        editor.putString("ImgUrl",sessionData.getImageUrl()).commit();
 
     }
 
-    public int getSession() {
+    public String getUserName(){
+
+        return sharedPreferences.getString("Username","Not Available");
+    }
+
+    public String getImgUrl(){
+
+        return sharedPreferences.getString("ImgUrl","Url is not valid");
+    }
+
+    public long getSession() {
         //return user id whose session is saved
-        return sharedPreferences.getInt(SESSION_KEY, -1);
+        return sharedPreferences.getLong(SESSION_KEY, 0);
     }
 
     public void removeSession() {
-        editor.putInt(SESSION_KEY, -1).commit();
+        editor.putLong(SESSION_KEY, 0).commit();
     }
 }

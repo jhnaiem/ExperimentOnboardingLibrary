@@ -78,7 +78,7 @@ public class LoginActivity extends AppCompatActivity {
                         sessionManagement.saveSession(sessionData);
 
                         //
-                        moveToMainactivity();
+                        moveToMainactivity(sessionManagement);
                     }
                 });
 
@@ -92,12 +92,12 @@ public class LoginActivity extends AppCompatActivity {
         super.onStart();
 
         SessionManagement sessionManagement = new SessionManagement(LoginActivity.this);
-        int userLoggedinID = sessionManagement.getSession();
+        long userLoggedinID = sessionManagement.getSession();
 
         //check if user is logged in or not?
-        if (userLoggedinID != -1) {
+        if (userLoggedinID != 0) {
             //user is logged in so move to mainactivity
-            moveToMainactivity();
+            moveToMainactivity(sessionManagement);
         } else {
             //nothing to do
         }
@@ -105,8 +105,12 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     //method to move to main activity
-    private void moveToMainactivity() {
+    private void moveToMainactivity(SessionManagement userInfo) {
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        intent.putExtra("UserId", userInfo.getSession());
+        intent.putExtra("Username", userInfo.getUserName());
+        intent.putExtra("imgUrl", userInfo.getImgUrl());
+
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
