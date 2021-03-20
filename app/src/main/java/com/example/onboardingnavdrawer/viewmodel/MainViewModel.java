@@ -1,5 +1,6 @@
 package com.example.onboardingnavdrawer.viewmodel;
 
+import android.graphics.Bitmap;
 import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
@@ -33,10 +34,11 @@ public class MainViewModel extends ViewModel {
 
     private static Realm mRealm;
     private long userId;
+    private MyApiService myApiService = new NetworkCall();
+
 
 
     public void onLoginClick(User user) {
-        MyApiService myApiService = new NetworkCall();
 
 
         myApiService.userValidityCheck(user, new ResponseCallback<LoginResponseBody>() {
@@ -61,6 +63,8 @@ public class MainViewModel extends ViewModel {
                     //loginRequestStatus.setValue(data.isSuccess());
                     sessionDataMutableLiveData.setValue(sessionData);
                     storeInRealm(data.getApp_top_module_assignment(), userId, userName, imageUrl);
+
+                    callFetchImage(imageUrl);
                 }
 
 
@@ -70,9 +74,34 @@ public class MainViewModel extends ViewModel {
             public void onError(Throwable th) {
 
             }
+
+            @Override
+            public void onImageSuccess(Bitmap bitmap) {
+
+            }
         });
 
 
+
+    }
+
+    private void callFetchImage(String imageUrl) {
+        myApiService.userImageFetch(imageUrl, new ResponseCallback<LoginResponseBody>() {
+            @Override
+            public void onSuccess(LoginResponseBody data) {
+
+            }
+
+            @Override
+            public void onError(Throwable th) {
+
+            }
+
+            @Override
+            public void onImageSuccess(Bitmap bitmap) {
+
+            }
+        });
     }
 
     private void storeInRealm(List<AppModuleAssignment> app_top_module_assignment, long userId, String userName, String imageUrl) {
