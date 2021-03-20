@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -23,6 +24,7 @@ import com.example.onboardingnavdrawer.model.AppModuleAssignment;
 import com.example.onboardingnavdrawer.model.SessionManagement;
 import com.example.onboardingnavdrawer.viewmodel.MainViewModel;
 import com.google.android.material.navigation.NavigationView;
+import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,6 +46,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private MainViewModel mainViewModel;
     private Realm mRealm;
     private TextView txtName;
+    private ImageView imageViewProfile;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -70,6 +73,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Navigation view header
         navHeader = navigationView.getHeaderView(0);
         txtName = navHeader.findViewById(R.id.name);
+        imageViewProfile = navHeader.findViewById(R.id.imageViewPro);
 
         mainViewModel = new MainViewModel();
 
@@ -93,31 +97,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void loadNavHeader(String userName, String imgUrl) {
         txtName.setText(userName);
 
-
+        String url = "http://bloomhn.fisdev.com" + imgUrl;
+        Picasso.with(MainActivity.this).load(url).into(imageViewProfile);
 
 
     }
-
-    public Bitmap getBitmapFromURL(String src) {
-        String url = "http://bloomhn.fisdev.com"+src;
-        try {
-            java.net.URL urlFinal = new java.net.URL(url);
-            HttpURLConnection connection = (HttpURLConnection) urlFinal
-                    .openConnection();
-            connection.setDoInput(true);
-            connection.connect();
-            InputStream input = connection.getInputStream();
-            Bitmap myBitmap = BitmapFactory.decodeStream(input);
-            return myBitmap;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-
-
-
+    
 
     private void addMenuItemInNavMenuDrawer(List<String> strings) {
         NavigationView navView = findViewById(R.id.nav_view);
