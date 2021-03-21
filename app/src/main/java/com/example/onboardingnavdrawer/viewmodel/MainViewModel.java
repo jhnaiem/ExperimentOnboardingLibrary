@@ -75,6 +75,7 @@ public class MainViewModel extends ViewModel {
 
     }
 
+    //To store AppModule and userId in realmDB
     private void storeInRealm(List<AppModuleAssignment> app_top_module_assignment, long userId, String userName, String imageUrl) {
         try {
             initRealm();

@@ -18,28 +18,29 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 
 import com.example.onboardingnavdrawer.model.AppModuleAssignment;
 import com.example.onboardingnavdrawer.model.SessionManagement;
+import com.example.onboardingnavdrawer.view.MenuFragment;
 import com.example.onboardingnavdrawer.viewmodel.MainViewModel;
 import com.google.android.material.navigation.NavigationView;
 import com.squareup.picasso.Picasso;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
+
 import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
-import io.realm.RealmResults;
-import io.realm.exceptions.RealmMigrationNeededException;
+
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
 
+    private DrawerLayout mDrawerLayout;
     private NavigationView navigationView;
     private View navHeader;
 
@@ -92,8 +93,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
+        setupDrawerContent(navigationView);
+
+
     }
 
+    //Set name and profile pic in the navigation header
     private void loadNavHeader(String userName, String imgUrl) {
         txtName.setText(userName);
 
@@ -102,11 +107,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
     }
-    
 
+
+    //To add menu item dynamically in the navigation drawer
     private void addMenuItemInNavMenuDrawer(List<String> strings) {
-        NavigationView navView = findViewById(R.id.nav_view);
-        Menu menu = navView.getMenu();
+        //NavigationView navView = findViewById(R.id.nav_view);
+        Menu menu = navigationView.getMenu();
 
         for (String menuItem : strings) {
             menu.add(menuItem);
@@ -117,15 +123,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 SessionManagement sessionManagement = new SessionManagement(MainActivity.this);
                 sessionManagement.removeSession();
 
+                //CLear realm before logout
                 clearRealm();
+                //and move back to login activity
                 moveToLogin();
 
                 return false;
             }
         });
-        navView.invalidate();
+        navigationView.invalidate();
     }
 
+    private void setupDrawerContent(NavigationView navigationView) {
+        navigationView.setNavigationItemSelectedListener(this);
+    }
+
+    //To clear or delete realmDB of a user
     private void clearRealm() {
 
         initRealm();
@@ -141,6 +154,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
+    //To move back to login activity
     private void moveToLogin() {
         Intent intent = new Intent(MainActivity.this, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -158,9 +172,33 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
+
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        return false;
+
+        Fragment RegisteredFarmersFragments = new MenuFragment();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        if (item != null) {
+            switch (item.toString()) {
+                case "Registered Farmers":
+                    View view = findViewById(R.id.fragment_placeholder);
+                    view.setBackgroundResource(R.color.white);
+                    fragmentTransaction.replace(R.id.fragment_placeholder, RegisteredFarmersFragments);
+                    fragmentTransaction.commit();
+                    break;
+                default:
+                    break;
+
+            }
+
+        }
+
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerLayout.closeDrawers();
+
+        return true;
     }
 
     private void initRealm() {
