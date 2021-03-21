@@ -1,15 +1,21 @@
 package com.example.onboardingnavdrawer;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Point;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -27,10 +33,14 @@ import com.example.onboardingnavdrawer.model.AppModuleAssignment;
 import com.example.onboardingnavdrawer.model.SessionManagement;
 import com.example.onboardingnavdrawer.view.MenuFragment;
 import com.example.onboardingnavdrawer.viewmodel.MainViewModel;
+import com.github.amlcurran.showcaseview.ShowcaseView;
+import com.github.amlcurran.showcaseview.targets.Target;
+import com.github.amlcurran.showcaseview.targets.ViewTarget;
 import com.google.android.material.navigation.NavigationView;
 import com.squareup.picasso.Picasso;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.realm.Realm;
@@ -48,6 +58,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private Realm mRealm;
     private TextView txtName;
     private ImageView imageViewProfile;
+
+    private ShowcaseView showcaseView;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -93,9 +106,43 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
+
+        Target target = new Target() {
+            @Override
+            public Point getPoint() {
+                return new Point(100, 100);
+            }
+        };
+
+        //Check if targeted prompts have been shown or not
+        if (!getDefaults(userName, this)) {
+            showcaseView = new ShowcaseView.Builder(this)
+                    .setTarget(new ViewTarget(mainViewModel.getToolbarNavigationIcon(toolbar)))
+                    .setContentTitle("Click here")
+                    .hideOnTouchOutside()
+                    .build();
+            setDefaults("shown", true, this);
+        }
+
+
         setupDrawerContent(navigationView);
 
 
+
+    }
+
+  
+
+    private void setDefaults(String key, boolean value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(key, value);
+        editor.commit();
+    }
+
+    private boolean getDefaults(String key, Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean(key, false);
     }
 
     //Set name and profile pic in the navigation header
@@ -117,20 +164,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         for (String menuItem : strings) {
             menu.add(menuItem);
         }
-        menu.add("Logout").setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                SessionManagement sessionManagement = new SessionManagement(MainActivity.this);
-                sessionManagement.removeSession();
-
-                //CLear realm before logout
-                clearRealm();
-                //and move back to login activity
-                moveToLogin();
-
-                return false;
-            }
-        });
+        menu.add("Logout");
         navigationView.invalidate();
     }
 
@@ -187,6 +221,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     view.setBackgroundResource(R.color.white);
                     fragmentTransaction.replace(R.id.fragment_placeholder, RegisteredFarmersFragments);
                     fragmentTransaction.commit();
+                    break;
+                case "Logout":
+                    SessionManagement sessionManagement = new SessionManagement(MainActivity.this);
+                    sessionManagement.removeSession();
+
+                    //CLear realm before logout
+                    clearRealm();
+                    //and move back to login activity
+                    moveToLogin();
                     break;
                 default:
                     break;
