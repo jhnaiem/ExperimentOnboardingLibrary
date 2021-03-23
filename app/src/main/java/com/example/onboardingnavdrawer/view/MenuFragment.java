@@ -9,16 +9,27 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.elconfidencial.bubbleshowcase.BubbleShowCase;
+import com.elconfidencial.bubbleshowcase.BubbleShowCaseBuilder;
 import com.example.onboardingnavdrawer.R;
 
 public class MenuFragment extends Fragment {
+
+    private BubbleShowCase bubbleShowCase;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         container.removeAllViews();
-        View view = inflater.inflate(R.layout.fragment_menu,container,false);
+        View view = inflater.inflate(R.layout.fragment_menu, container, false);
+
+        bubbleShowCase = new BubbleShowCaseBuilder(getActivity())
+                .title("First Button").description("Tap here")
+                .arrowPosition(BubbleShowCase.ArrowPosition.TOP)
+                .targetView(view.findViewById(R.id.button1))
+                .show();
+
         return view;
     }
 
