@@ -117,20 +117,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         for (String menuItem : strings) {
             menu.add(menuItem);
         }
-        menu.add("Logout").setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                SessionManagement sessionManagement = new SessionManagement(MainActivity.this);
-                sessionManagement.removeSession();
-
-                //CLear realm before logout
-                clearRealm();
-                //and move back to login activity
-                moveToLogin();
-
-                return false;
-            }
-        });
+        menu.add("Logout");
         navigationView.invalidate();
     }
 
@@ -187,6 +174,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     view.setBackgroundResource(R.color.white);
                     fragmentTransaction.replace(R.id.fragment_placeholder, RegisteredFarmersFragments);
                     fragmentTransaction.commit();
+                    break;
+
+                case "Logout":
+                    SessionManagement sessionManagement = new SessionManagement(MainActivity.this);
+                    sessionManagement.removeSession();
+
+                    //CLear realm before logout
+                    clearRealm();
+                    //and move back to login activity
+                    moveToLogin();
+
                     break;
                 default:
                     break;
