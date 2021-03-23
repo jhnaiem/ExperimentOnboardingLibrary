@@ -49,6 +49,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private TextView txtName;
     private ImageView imageViewProfile;
 
+    private long userId;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         toggle.syncState();
 
 
-        long userId = getIntent().getExtras().getLong("UserId");
+        userId = getIntent().getExtras().getLong("UserId");
         String userName = getIntent().getExtras().getString("Username");
         String imgUrl = getIntent().getExtras().getString("imgUrl");
 
@@ -163,6 +165,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
+        Bundle bundle = new Bundle();
         Fragment RegisteredFarmersFragments = new MenuFragment();
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -172,6 +175,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 case "Registered Farmers":
                     View view = findViewById(R.id.fragment_placeholder);
                     view.setBackgroundResource(R.color.white);
+                    bundle.putString("UserId", String.valueOf(userId));
+                    RegisteredFarmersFragments.setArguments(bundle);
                     fragmentTransaction.replace(R.id.fragment_placeholder, RegisteredFarmersFragments);
                     fragmentTransaction.commit();
                     break;

@@ -24,10 +24,13 @@ public class MenuFragment extends Fragment {
         container.removeAllViews();
         View view = inflater.inflate(R.layout.fragment_menu, container, false);
 
+        String  userId = getArguments().getString("UserId");
+
         bubbleShowCase = new BubbleShowCaseBuilder(getActivity())
                 .title("First Button").description("Tap here")
                 .arrowPosition(BubbleShowCase.ArrowPosition.TOP)
                 .targetView(view.findViewById(R.id.button1))
+                .showOnce(userId)
                 .show();
 
         return view;
