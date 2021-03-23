@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -53,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private DrawerLayout mDrawerLayout;
     private NavigationView navigationView;
     private View navHeader;
+    private Toolbar toolbar;
 
     private MainViewModel mainViewModel;
     private Realm mRealm;
@@ -61,26 +63,48 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private ShowcaseView showcaseView;
 
+    private String userName;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_drawer);
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
 
         setSupportActionBar(toolbar);
 
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
+                this, mDrawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        mDrawerLayout.addDrawerListener(toggle);
         toggle.syncState();
-
+        setSupportActionBar(toolbar);
 
         long userId = getIntent().getExtras().getLong("UserId");
-        String userName = getIntent().getExtras().getString("Username");
+        userName = getIntent().getExtras().getString("Username");
         String imgUrl = getIntent().getExtras().getString("imgUrl");
+
+
+        targetedPromptsChecker(userName);
+
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+                    mDrawerLayout.closeDrawer(GravityCompat.START);
+
+                } else {
+                    mDrawerLayout.openDrawer((int) Gravity.START);
+                    if (showcaseView != null)
+                        showcaseView.hide();
+
+                }
+            }
+
+        });
 
 
         navigationView = findViewById(R.id.nav_view);
@@ -107,31 +131,35 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
 
 
-        Target target = new Target() {
-            @Override
-            public Point getPoint() {
-                return new Point(100, 100);
-            }
-        };
+//        Target target = new Target() {
+//            @Override
+//            public Point getPoint() {
+//                return new Point(100, 100);
+//            }
+//        };
 
         //Check if targeted prompts have been shown or not
+        //To check if targeted prompts has shown or not
+
+
+        setupDrawerContent(navigationView);
+
+
+    }
+
+    //To check if targeted prompts has shown or not
+    private void targetedPromptsChecker(String userName) {
         if (!getDefaults(userName, this)) {
             showcaseView = new ShowcaseView.Builder(this)
                     .setTarget(new ViewTarget(mainViewModel.getToolbarNavigationIcon(toolbar)))
                     .setContentTitle("Click here")
                     .hideOnTouchOutside()
                     .build();
-            setDefaults("shown", true, this);
+            setDefaults(userName, true, this);
         }
-
-
-        setupDrawerContent(navigationView);
-
-
 
     }
 
-  
 
     private void setDefaults(String key, boolean value, Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -198,9 +226,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START);
+        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+            mDrawerLayout.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
         }
