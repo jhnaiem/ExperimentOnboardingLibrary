@@ -10,8 +10,12 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.onboardingnavdrawer.R;
+import com.takusemba.spotlight.Spotlight;
 
 public class MenuFragment extends Fragment {
+
+
+    private Spotlight spotlight;
 
     @Nullable
     @Override
@@ -19,6 +23,8 @@ public class MenuFragment extends Fragment {
 
         container.removeAllViews();
         View view = inflater.inflate(R.layout.fragment_menu,container,false);
+
+
         return view;
     }
 
