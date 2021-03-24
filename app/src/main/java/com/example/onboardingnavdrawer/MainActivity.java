@@ -165,7 +165,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
-        Bundle bundle = new Bundle();
+
         Fragment RegisteredFarmersFragments = new MenuFragment();
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -175,6 +175,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 case "Registered Farmers":
                     View view = findViewById(R.id.fragment_placeholder);
                     view.setBackgroundResource(R.color.white);
+                    Bundle bundle = new Bundle();
                     bundle.putString("UserId", String.valueOf(userId));
                     RegisteredFarmersFragments.setArguments(bundle);
                     fragmentTransaction.replace(R.id.fragment_placeholder, RegisteredFarmersFragments);
