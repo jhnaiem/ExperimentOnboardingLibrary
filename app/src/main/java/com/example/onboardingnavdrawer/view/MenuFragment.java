@@ -82,6 +82,7 @@ public class MenuFragment extends Fragment {
 
                     @Override
                     public void onCloseActionImageClick(@NotNull BubbleShowCase bubbleShowCase) {
+                        getButton1ShowCaseBuilder().show();
 
                     }
 
