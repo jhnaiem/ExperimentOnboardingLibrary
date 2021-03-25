@@ -44,12 +44,6 @@ public class MenuFragment extends Fragment {
         }
 
 
-//        bubbleShowCase = new BubbleShowCaseBuilder(getActivity())
-//                .title("First Button").description("Tap here")
-//                .arrowPosition(BubbleShowCase.ArrowPosition.TOP)
-//                .targetView(view.findViewById(R.id.button1))
-//                .showOnce(userId)
-//                .show();
 
         setUpListeners();
 
@@ -58,14 +52,8 @@ public class MenuFragment extends Fragment {
     }
 
     private void setUpListeners() {
-        bubbleShowCase = getButton1ShowCaseBuilder().show();
+        getButton1ShowCaseBuilder().showOnce(userId);
         //getSequence().show();
-//        button1.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                getButton2ShowCaseBuilder().show();
-//            }
-//        });
 
     }
 
@@ -82,7 +70,7 @@ public class MenuFragment extends Fragment {
 
                     @Override
                     public void onCloseActionImageClick(@NotNull BubbleShowCase bubbleShowCase) {
-                        getButton1ShowCaseBuilder().show();
+                        getButton1ShowCaseBuilder().showOnce(userId);
 
                     }
 

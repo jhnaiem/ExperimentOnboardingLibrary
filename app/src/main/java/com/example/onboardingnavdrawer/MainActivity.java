@@ -190,7 +190,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     View view = findViewById(R.id.fragment_placeholder);
                     view.setBackgroundResource(R.color.white);
                     Bundle bundle = new Bundle();
-                    bundle.putString("UserId", String.valueOf(userId));
+                    bundle.putString("UserId", String.valueOf(userId)+userName);
                     RegisteredFarmersFragments.setArguments(bundle);
                     fragmentTransaction.replace(R.id.fragment_placeholder, RegisteredFarmersFragments);
                     fragmentTransaction.commit();
