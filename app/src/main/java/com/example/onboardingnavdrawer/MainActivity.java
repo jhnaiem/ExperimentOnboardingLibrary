@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,6 +24,9 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 
+import com.elconfidencial.bubbleshowcase.BubbleShowCase;
+import com.elconfidencial.bubbleshowcase.BubbleShowCaseBuilder;
+import com.elconfidencial.bubbleshowcase.BubbleShowCaseListener;
 import com.example.onboardingnavdrawer.model.AppModuleAssignment;
 import com.example.onboardingnavdrawer.model.SessionManagement;
 import com.example.onboardingnavdrawer.view.MenuFragment;
@@ -30,6 +34,8 @@ import com.example.onboardingnavdrawer.viewmodel.MainViewModel;
 import com.google.android.material.navigation.NavigationView;
 import com.squareup.picasso.Picasso;
 
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -43,32 +49,36 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private DrawerLayout mDrawerLayout;
     private NavigationView navigationView;
     private View navHeader;
+    private BubbleShowCase bubbleShowCase;
+
 
     private MainViewModel mainViewModel;
     private Realm mRealm;
     private TextView txtName;
     private ImageView imageViewProfile;
+    private Toolbar toolbar;
 
     private long userId;
+    private String userName;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_drawer);
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
 
+        //setSupportActionBar(toolbar);
+
+
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, mDrawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        mDrawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
         setSupportActionBar(toolbar);
 
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
-
-
         userId = getIntent().getExtras().getLong("UserId");
-        String userName = getIntent().getExtras().getString("Username");
+        userName = getIntent().getExtras().getString("Username");
         String imgUrl = getIntent().getExtras().getString("imgUrl");
 
 
@@ -94,6 +104,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
             }
         });
+
+
+        bubbleShowCase = getToggleBarShowCaseBuilder().show();
+
 
         setupDrawerContent(navigationView);
 
@@ -153,9 +167,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START);
+        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+            mDrawerLayout.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
         }
@@ -199,10 +212,43 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         }
 
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerLayout.closeDrawers();
 
         return true;
+    }
+
+    private BubbleShowCaseBuilder getToggleBarShowCaseBuilder() {
+
+        View toolbarView = MainViewModel.getToolbarNavigationIcon(toolbar);
+        return new BubbleShowCaseBuilder(MainActivity.this)
+                .title("First Button").description("Tap here")
+                .arrowPosition(BubbleShowCase.ArrowPosition.TOP)
+                .listener(new BubbleShowCaseListener() {
+                    @Override
+                    public void onTargetClick(@NotNull BubbleShowCase bubbleShowCase) {
+                        mDrawerLayout.openDrawer((int) Gravity.START);
+
+
+                    }
+
+                    @Override
+                    public void onCloseActionImageClick(@NotNull BubbleShowCase bubbleShowCase) {
+
+
+                    }
+
+                    @Override
+                    public void onBackgroundDimClick(@NotNull BubbleShowCase bubbleShowCase) {
+
+                    }
+
+                    @Override
+                    public void onBubbleClick(@NotNull BubbleShowCase bubbleShowCase) {
+
+                    }
+                })
+                .targetView(toolbarView);
+
     }
 
     private void initRealm() {
