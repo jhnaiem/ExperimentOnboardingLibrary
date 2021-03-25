@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_drawer);
         toolbar = findViewById(R.id.toolbar);
 
-        //setSupportActionBar(toolbar);
+        setSupportActionBar(toolbar);
 
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -75,7 +75,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 this, mDrawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         mDrawerLayout.addDrawerListener(toggle);
         toggle.syncState();
-        setSupportActionBar(toolbar);
 
         userId = getIntent().getExtras().getLong("UserId");
         userName = getIntent().getExtras().getString("Username");
@@ -106,7 +105,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
 
 
-        bubbleShowCase = getToggleBarShowCaseBuilder().show();
+        getToggleBarShowCaseBuilder().show();
+
+        //getToggleBarShowCaseBuilder().showOnce(String.valueOf(userId));
 
 
         setupDrawerContent(navigationView);
@@ -217,11 +218,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
+    //
     private BubbleShowCaseBuilder getToggleBarShowCaseBuilder() {
 
         View toolbarView = MainViewModel.getToolbarNavigationIcon(toolbar);
         return new BubbleShowCaseBuilder(MainActivity.this)
-                .title("First Button").description("Tap here")
+                .title("Toolbar").description("Tap here!")
                 .arrowPosition(BubbleShowCase.ArrowPosition.TOP)
                 .listener(new BubbleShowCaseListener() {
                     @Override
@@ -233,6 +235,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                     @Override
                     public void onCloseActionImageClick(@NotNull BubbleShowCase bubbleShowCase) {
+                        getToggleBarShowCaseBuilder().showOnce(String.valueOf(userId));
 
 
                     }
@@ -247,9 +250,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                     }
                 })
+                .showOnce(String.valueOf(userId))
                 .targetView(toolbarView);
 
     }
+
+
 
     private void initRealm() {
         if (mRealm == null || mRealm.isClosed()) {
@@ -262,4 +268,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             mRealm = Realm.getInstance(realmConfiguration);
         }
     }
+
+
 }
