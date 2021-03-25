@@ -1,6 +1,9 @@
 package com.example.onboardingnavdrawer.view;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,21 +54,19 @@ public class MenuFragment extends Fragment {
 //                .showOnce(userId)
 //                .show();
 
-        setUpListeners();
+        if (!getDefaults(userId, getActivity())) {
+            setUpListeners();
+        }
 
 
         return view;
     }
 
     private void setUpListeners() {
-        bubbleShowCase = getButton1ShowCaseBuilder().show();
+        getButton1ShowCaseBuilder().show();
+        setDefaults(userId,true,getActivity());
         //getSequence().show();
-//        button1.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                getButton2ShowCaseBuilder().show();
-//            }
-//        });
+
 
     }
 
@@ -122,6 +123,19 @@ public class MenuFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
     }
+
+    private void setDefaults(String key, boolean value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(key, value);
+        editor.commit();
+    }
+
+    private boolean getDefaults(String key, Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean(key, false);
+    }
+
 
     @Override
     public void onDestroyView() {
