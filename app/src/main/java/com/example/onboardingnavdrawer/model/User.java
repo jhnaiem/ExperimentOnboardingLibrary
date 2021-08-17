@@ -2,7 +2,9 @@ package com.example.onboardingnavdrawer.model;
 
 import com.google.gson.annotations.SerializedName;
 
-public class User {
+import io.realm.RealmObject;
+
+public class User extends RealmObject {
 
     @SerializedName("username")
     private String username;

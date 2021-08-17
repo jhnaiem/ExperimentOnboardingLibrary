@@ -10,12 +10,19 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.example.onboardingnavdrawer.model.SessionData;
+import com.example.onboardingnavdrawer.model.SessionManagement;
 import com.example.onboardingnavdrawer.model.User;
 import com.example.onboardingnavdrawer.viewmodel.MainViewModel;
 
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
+
 public class LoginActivity extends AppCompatActivity {
-    EditText mUsername, mPassword;
-    Button mlogin;
+
+    private Realm mRealm = null;
+    private EditText mUsername, mPassword;
+    private Button mlogin;
 
     MainViewModel viewModel;
 
@@ -31,6 +38,17 @@ public class LoginActivity extends AppCompatActivity {
         mPassword = findViewById(R.id.et_password);
         mlogin = findViewById(R.id.btn_login);
 
+
+        //Config Realm
+        Realm.init(this);
+        RealmConfiguration realmConfiguration = new RealmConfiguration
+                .Builder()
+                .name("userInfoTopModule.realm")
+                .deleteRealmIfMigrationNeeded()
+                .build();
+        Realm.setDefaultConfiguration(realmConfiguration);
+
+
         mlogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -45,15 +63,55 @@ public class LoginActivity extends AppCompatActivity {
                 viewModel.getLoginRequestStatus().observe(LoginActivity.this, new Observer<Boolean>() {
                     @Override
                     public void onChanged(Boolean aBoolean) {
-                        if (aBoolean){
+                        if (aBoolean) {
                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                             startActivity(intent);
                         }
                     }
                 });
 
+
+                viewModel.sessionDataMutableLiveData.observe(LoginActivity.this, new Observer<SessionData>() {
+                    @Override
+                    public void onChanged(SessionData sessionData) {
+                        SessionManagement sessionManagement = new SessionManagement(LoginActivity.this);
+                        sessionManagement.saveSession(sessionData);
+
+                        //
+                        moveToMainactivity(sessionManagement);
+                    }
+                });
+
             }
         });
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        SessionManagement sessionManagement = new SessionManagement(LoginActivity.this);
+        long userLoggedinID = sessionManagement.getSession();
+
+        //check if user is logged in or not?
+        if (userLoggedinID != 0) {
+            //user is logged in so move to mainactivity
+            moveToMainactivity(sessionManagement);
+        } else {
+            //nothing to do
+        }
+
+    }
+
+    //method to move to main activity
+    private void moveToMainactivity(SessionManagement userInfo) {
+        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        intent.putExtra("UserId", userInfo.getSession());
+        intent.putExtra("Username", userInfo.getUserName());
+        intent.putExtra("imgUrl", userInfo.getImgUrl());
+
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
     }
 }

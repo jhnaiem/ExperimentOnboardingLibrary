@@ -22,7 +22,7 @@
         </activity>
         <activity
             android:name=".MainActivity"
-            android:label="Practice"
+            android:label="OnBoarding"
             android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
